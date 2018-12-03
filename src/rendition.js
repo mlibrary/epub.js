@@ -83,14 +83,18 @@ class Rendition {
 		this.hooks.content.register(this.passEvents.bind(this));
 		this.hooks.content.register(this.adjustImages.bind(this));
 
-		this.book.spine.hooks.content.register(this.injectIdentifier.bind(this));
+		this.injected = {};
+		this.injected['identifier'] = this.injectIdentifier.bind(this);
+		this.book.spine.hooks.content.register(this.injected['identifier']);
 
 		if (this.settings.stylesheet) {
-			this.book.spine.hooks.content.register(this.injectStylesheet.bind(this));
+			this.injected['stylesheet'] = this.injectStylesheet.bind(this);
+			this.book.spine.hooks.content.register(this.injected['stylesheet']);
 		}
 
 		if (this.settings.script) {
-			this.book.spine.hooks.content.register(this.injectScript.bind(this));
+			this.injected['script'] = this.injectScript.bind(this);
+			this.book.spine.hooks.content.register(this.injected['script']);
 		}
 
 		/**
@@ -824,6 +828,9 @@ class Rendition {
 		// this.q = undefined;
 
 		this.manager && this.manager.destroy();
+		this.book.spine.hooks.content.deregister(this.injected['identifier']);
+		this.book.spine.hooks.content.deregister(this.injected['script']);
+		this.book.spine.hooks.content.deregister(this.injected['stylesheet']);
 
 		this.book = undefined;
 
