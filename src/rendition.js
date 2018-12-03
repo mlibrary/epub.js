@@ -1041,6 +1041,9 @@ class Rendition {
 		doc.getElementsByTagName("head")[0].appendChild(meta);
 	}
 
+	scale(s) {
+		return this.manager && this.manager.scale(s);
+	}
 }
 
 //-- Enable binding events to Renderer

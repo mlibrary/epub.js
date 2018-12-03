@@ -24,6 +24,7 @@ class Stage {
 		let overflow  = options.overflow || false;
 		let axis = options.axis || "vertical";
 		let direction = options.direction;
+		let scale = options.scale || 1.0;
 
 		if(options.height && isNumber(options.height)) {
 			height = options.height + "px";
@@ -72,6 +73,15 @@ class Stage {
 
 		if (direction && this.settings.fullsize) {
 			document.body.style["direction"] = direction;
+		}
+
+		if (scale && scale > 1.0) {
+			container.style["transform-origin"] = "top left";
+			container.style["transform"] = "scale(" + scale + ")";
+			container.style.overflow = "visible";
+		} else {
+			container.style["transform-origin"] = null;
+			container.style["transform"] = null;
 		}
 
 		return container;
@@ -319,6 +329,21 @@ class Stage {
 	overflow(overflow) {
 		if (this.container) {
 			this.container.style["overflow"] = overflow;
+		}
+	}
+
+	scale(s) {
+		if (this.container) {
+			if ( s > 1.0 ) {
+				this.container.style["transform-origin"] = "top left";
+				this.container.style["transform"] = "scale(" + s + ")";
+				this.container.style.overflow = "visible";
+			} else {
+				this.container.style.overflow = null;
+				this.container.style["transform-origin"] = null;
+				this.container.style["transform"] = null;
+			}
+			this.settings.scale = s;
 		}
 	}
 
