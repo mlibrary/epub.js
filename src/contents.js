@@ -1069,6 +1069,17 @@ class Contents {
 		this.height(viewportHeight);
 		this.overflow("hidden");
 
+		if ( viewport.width == 'auto' || viewport.height == 'auto' ) {
+			this.content.style.overflow = 'auto';
+			this.addStylesheetRules({
+				"body": {
+					"margin": 0,
+					"padding": "1em",
+					"box-sizing": "border-box"
+				}
+			})
+		}
+
 		// Scale to the correct size
 		this.scaler(scale, 0, 0);
 		// this.scaler(scale, offsetX > 0 ? offsetX : 0, offsetY);
