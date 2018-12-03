@@ -68,7 +68,8 @@ class DefaultViewManager {
 			hidden: this.settings.hidden,
 			axis: this.settings.axis,
 			fullsize: this.settings.fullsize,
-			direction: this.settings.direction
+			direction: this.settings.direction,
+			scale: this.settings.scale
 		});
 
 		this.stage.attachTo(element);
@@ -948,6 +949,15 @@ class DefaultViewManager {
 
 	isRendered() {
 		return this.rendered;
+	}
+
+	scale(s) {
+		if ( s == null ) { s = 1.0; }
+		this.settings.scale = s;
+
+		if (this.stage) {
+			this.stage.scale(s);
+		}
 	}
 }
 
