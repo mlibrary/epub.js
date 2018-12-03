@@ -149,7 +149,7 @@ class Layout {
 
 		spreadWidth = (columnWidth * divisor) + gap;
 
-		delta = width;
+		delta = Math.ceil(width);
 
 		this.width = width;
 		this.height = height;
