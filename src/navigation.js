@@ -167,6 +167,7 @@ class Navigation {
 			id = src;
 		}
 		let text = content.textContent || "";
+		let html = content.innerHTML;
 		let subitems = [];
 		let parentItem = getParentByTagName(item, "li");
 		let parent;
@@ -194,6 +195,7 @@ class Navigation {
 			"id": id,
 			"href": src,
 			"label": text,
+			"html": html,
 			"subitems" : subitems,
 			"parent" : parent
 		};
