@@ -620,6 +620,10 @@ class Contents {
 
 			if(el) {
 				position = el.getBoundingClientRect();
+				if ( position.top < 0 ) {
+					var offsetEl = el.offsetTop ? el : el.offsetParent;
+					position = { top: offsetEl.offsetTop, left: offsetEl.offsetLeft };
+				}
 			}
 		}
 
