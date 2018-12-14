@@ -673,6 +673,10 @@ class Contents {
 					position = newRange.getBoundingClientRect();
 				} else {
 					position = el.getBoundingClientRect();
+					if ( position.top < 0 ) {
+						var offsetEl = el.offsetTop ? el : el.offsetParent;
+						position = { top: offsetEl.offsetTop, left: offsetEl.offsetLeft };
+					}
 				}
 			}
 		}
