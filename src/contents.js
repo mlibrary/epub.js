@@ -1040,7 +1040,9 @@ class Contents {
 		this.css("transform-origin", "top left");
 
 		if (offsetX >= 0 || offsetY >= 0) {
-			translateStr = " translate(" + (offsetX || 0 )+ "px, " + (offsetY || 0 )+ "px )";
+			translateStr = " translate(" + (offsetX || 0 )+ "px, " + (offsetY || 0 )+ "px)";
+		// } else if ( offsetX || offsetY ) {
+		// 	translateStr = " translate(" + offsetX + "," + offsetY + ")";
 		}
 
 		this.css("transform", scaleStr + translateStr);
