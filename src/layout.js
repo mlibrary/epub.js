@@ -193,13 +193,25 @@ class Layout {
 		var formating;
 
 		if (this.name === "pre-paginated") {
-			formating = contents.fit(this.columnWidth, this.height, section);
+			if (this._flow === "scrolled") {
+				formating = contents.size(this.width, null);
+				contents.content.style.overflow = 'auto';
+				contents.addStylesheetRules({
+					"body": {
+						"margin": 0,
+						"padding": "1em !important",
+						"box-sizing": "border-box"
+					}
+				});
+			} else {
+				formating = contents.fit(this.columnWidth, this.height, section);
+			}
 		} else if (this._flow === "paginated") {
 			formating = contents.columns(this.width, this.height, this.columnWidth, this.gap, this.settings.direction);
 		} else if (axis && axis === "horizontal") {
 			formating = contents.size(null, this.height);
 		} else {
-			formating = contents.size(this.width, null);				
+			formating = contents.size(this.width, null);
 		}
 
 		return formating; // might be a promise in some View Managers
