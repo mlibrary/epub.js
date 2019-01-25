@@ -75,10 +75,10 @@ class Stage {
 			document.body.style["direction"] = direction;
 		}
 
-		if (scale && scale > 1.0) {
+		if (scale && scale != 1.0) {
 			container.style["transform-origin"] = "top left";
 			container.style["transform"] = "scale(" + scale + ")";
-			container.style.overflow = "visible";
+			container.style.overflow = "auto"; // "visible" breaks something?
 		} else {
 			container.style["transform-origin"] = null;
 			container.style["transform"] = null;
@@ -240,6 +240,11 @@ class Stage {
 								bodyPadding.bottom;
 		}
 
+		if ( this.settings.scale ) {
+			width /= this.settings.scale;
+			height /= this.settings.scale;
+		}
+
 		return {
 			width: width -
 							this.containerPadding.left -
@@ -334,12 +339,13 @@ class Stage {
 
 	scale(s) {
 		if (this.container) {
-			if ( s > 1.0 ) {
+			if ( s != 1.0 ) {
+				this._originalOverflow = this.container.style.overflow;
 				this.container.style["transform-origin"] = "top left";
 				this.container.style["transform"] = "scale(" + s + ")";
-				this.container.style.overflow = "visible";
+				this.container.style.overflow = "auto"; // "visible"
 			} else {
-				this.container.style.overflow = null;
+				this.container.style.overflow = this._originalOverflow;
 				this.container.style["transform-origin"] = null;
 				this.container.style["transform"] = null;
 			}
