@@ -38,6 +38,7 @@ class IframeView {
 		this.epubcfi = new EpubCFI();
 
 		this.layout = this.settings.layout;
+		// console.log("AHOY iframe NEW", this.layout.height);
 		// Dom events to listen for
 		// this.listenedEvents = ["keydown", "keyup", "keypressed", "mouseup", "mousedown", "click", "touchend", "touchstart"];
 
@@ -148,6 +149,7 @@ class IframeView {
 			.then(function(){
 
 				// apply the layout function to the contents
+				// console.log("AHOY IFRAME render", this.layout.height);
 				this.layout.format(this.contents);
 
 				// find and report the writingMode axis
@@ -200,6 +202,7 @@ class IframeView {
 
 		if(this.layout.name === "pre-paginated") {
 			this.lock("both", width, height);
+			// console.log("AHOY IRAME size lock", width, height);
 		} else if(this.settings.axis === "horizontal") {
 			this.lock("height", width, height);
 		} else {
@@ -262,7 +265,12 @@ class IframeView {
 
 		this._expanding = true;
 
-		if(this.layout.name === "pre-paginated") {
+		if(this.layout.name === 'pre-paginated' && this.settings.axis === 'vertical') {
+			height = this.contents.textHeight();
+			width = this.contents.textWidth();
+            // width = this.layout.columnWidth;
+
+		} else if(this.layout.name === "pre-paginated") {
 			width = this.layout.columnWidth;
 			height = this.layout.height;
 		}
@@ -288,6 +296,8 @@ class IframeView {
 		} // Expand Vertically
 		else if(this.settings.axis === "vertical") {
 			height = this.contents.textHeight();
+			// width = this.contents.textWidth();
+			// console.log("AHOY AHOY expand", this.index, width, height, "/", this._width, this._height);
 		}
 
 		// Only Resize if dimensions have changed or
@@ -504,6 +514,7 @@ class IframeView {
 			this.iframe.style.transform = null;
 		}
 
+		// console.log("AHOY VIEWS iframe show", this.index);
 		this.emit(EVENTS.VIEWS.SHOWN, this);
 	}
 
@@ -513,6 +524,7 @@ class IframeView {
 		this.iframe.style.visibility = "hidden";
 
 		this.stopExpanding = true;
+		// console.log("AHOY VIEWS iframe hide", this.index);
 		this.emit(EVENTS.VIEWS.HIDDEN, this);
 	}
 

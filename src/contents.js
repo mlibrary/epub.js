@@ -1055,11 +1055,29 @@ class Contents {
 	 */
 	fit(width, height){
 		var viewport = this.viewport();
-		var viewportWidth = parseInt(viewport.width);
-		var viewportHeight = parseInt(viewport.height);
+		var viewportWidth;
+		var viewportHeight;
+
+		// var viewportWidth = parseInt(viewport.width);
+		// var viewportHeight = parseInt(viewport.height);
+
+		if ( viewport.width == 'auto' && viewport.height == 'auto' ) {
+			viewportWidth = width;
+			viewportHeight = height; // this.textHeight(); // height;
+			console.log("AHOY contents.fit", height, this.textHeight());
+		} else {
+			viewportWidth = parseInt(viewport.width);
+			viewportHeight = parseInt(viewport.height);
+		}
+
 		var widthScale = width / viewportWidth;
 		var heightScale = height / viewportHeight;
-		var scale = widthScale < heightScale ? widthScale : heightScale;
+		var scale;
+		if ( this.axis == 'xxxvertical' ) {
+			scale = widthScale > heightScale ? widthScale : heightScale;
+		} else {
+			scale = widthScale < heightScale ? widthScale : heightScale;
+		}
 
 		// the translate does not work as intended, elements can end up unaligned
 		// var offsetY = (height - (viewportHeight * scale)) / 2;
