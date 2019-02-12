@@ -206,12 +206,25 @@ class Stage {
 			}
 		}
 
+		var _round = function(value) {
+			return Math.round(value);
+
+			// -- this calculates the closest even number to value
+			var retval = 2 * Math.round(value / 2);
+			if ( retval > value ) {
+				retval -= 2;
+			}
+			return retval;
+		}
+
 		if(!isNumber(width)) {
-			width = this.container.clientWidth;
+			bounds = this.container.getBoundingClientRect();
+			width = _round(bounds.width);
 		}
 
 		if(!isNumber(height)) {
-			height = this.container.clientHeight;
+			bounds = bounds || this.container.getBoundingClientRect();
+			height = _round(bounds.height);
 		}
 
 		this.containerStyles = window.getComputedStyle(this.container);
