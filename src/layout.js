@@ -193,7 +193,7 @@ class Layout {
 		var formating;
 
 		var viewport = contents.viewport();
-		console.log("AHOY contents.format VIEWPORT", this.name, viewport.height);
+		// console.log("AHOY contents.format VIEWPORT", this.name, viewport.height);
 		if (this.name === "pre-paginated" && viewport.height != 'auto' && viewport.height != undefined ) {
 			// console.log("AHOY CONTENTS format", this.columnWidth, this.height);
 			formating = contents.fit(this.columnWidth, this.height);
