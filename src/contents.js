@@ -41,6 +41,7 @@ class Contents {
 
 		this.epubReadingSystem("epub.js", EPUBJS_VERSION);
 
+		this.setViewport();
 		this.listeners();
 	}
 
@@ -144,6 +145,11 @@ class Contents {
 		* @returns {number} width
 		*/
 	textWidth() {
+		var viewport = this.$viewport;
+		if ( false && viewport && viewport.width && viewport.width != 'auto' ) {
+			return Math.round(parseFloat(viewport.width, 10));
+		}
+
 		let rect;
 		let width;
 		let range = this.document.createRange();
@@ -169,6 +175,11 @@ class Contents {
 		* @returns {number} height
 		*/
 	textHeight() {
+		var viewport = this.$viewport;
+		if ( false && viewport && viewport.height && viewport.height != 'auto' ) {
+			return Math.round(parseFloat(viewport.height, 10));
+		}
+
 		let rect;
 		let height;
 		let range = this.document.createRange();
@@ -371,6 +382,56 @@ class Contents {
 
 
 		return settings;
+	}
+
+	setViewport() {
+		this.$viewport = { height: 'auto', width: 'auto' };
+		var $viewport = this.document.querySelector("meta[name='viewport']");
+		var parsed = {
+			"width": undefined,
+			"height": undefined,
+			"scale": undefined,
+			"minimum": undefined,
+			"maximum": undefined,
+			"scalable": undefined
+		};
+		var newContent = [];
+		var settings = {};
+
+		/*
+		* check for the viewport size
+		* <meta name="viewport" content="width=1024,height=697" />
+		*/
+		if($viewport && $viewport.hasAttribute("content")) {
+			let content = $viewport.getAttribute("content");
+			let _width = content.match(/width\s*=\s*([^,]*)/);
+			let _height = content.match(/height\s*=\s*([^,]*)/);
+			let _scale = content.match(/initial-scale\s*=\s*([^,]*)/);
+			let _minimum = content.match(/minimum-scale\s*=\s*([^,]*)/);
+			let _maximum = content.match(/maximum-scale\s*=\s*([^,]*)/);
+			let _scalable = content.match(/user-scalable\s*=\s*([^,]*)/);
+
+			if(_width && _width.length && typeof _width[1] !== "undefined"){
+				parsed.width = _width[1];
+			}
+			if(_height && _height.length && typeof _height[1] !== "undefined"){
+				parsed.height = _height[1];
+			}
+			if(_scale && _scale.length && typeof _scale[1] !== "undefined"){
+				parsed.scale = _scale[1];
+			}
+			if(_minimum && _minimum.length && typeof _minimum[1] !== "undefined"){
+				parsed.minimum = _minimum[1];
+			}
+			if(_maximum && _maximum.length && typeof _maximum[1] !== "undefined"){
+				parsed.maximum = _maximum[1];
+			}
+			if(_scalable && _scalable.length && typeof _scalable[1] !== "undefined"){
+				parsed.scalable = _scalable[1];
+			}
+		}
+		this.$viewport.height = parseFloat(parsed.height) || 'auto';
+		this.$viewport.width = parseFloat(parsed.width) || 'auto';
 	}
 
 	/**
@@ -1078,6 +1139,7 @@ class Contents {
 		} else {
 			scale = widthScale < heightScale ? widthScale : heightScale;
 		}
+		// console.log("AHOY contents.fit", width, height, ":", viewportWidth, viewportHeight, ":", scale);
 
 		// the translate does not work as intended, elements can end up unaligned
 		// var offsetY = (height - (viewportHeight * scale)) / 2;
