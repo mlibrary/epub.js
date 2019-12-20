@@ -10,6 +10,7 @@ class Spine {
 	constructor() {
 		this.spineItems = [];
 		this.spineByHref = {};
+		this.spineByAbsoluteHref = {};
 		this.spineById = {};
 
 		this.hooks = {};
@@ -138,10 +139,23 @@ class Spine {
 			index = target;
 		} else if(typeof target === "string" && target.indexOf("#") === 0) {
 			index = this.spineById[target.substring(1)];
+		} else if(typeof target === "string" && target.indexOf('http') === 0) {
+			// Remove fragments
+			target = target.split("#")[0];
+			index = this.spineByAbsoluteHref[target];
 		} else if(typeof target === "string") {
 			// Remove fragments
 			target = target.split("#")[0];
 			index = this.spineByHref[target] || this.spineByHref[encodeURI(target)];
+			if ( ! index ) {
+				// check for relative paths
+				for(var i = 0; i < this.spineItems.length; i++)	{
+					if ( this.spineItems[i].href.indexOf('/' + target) > -1 ) {
+						index = i;
+						break;
+					}
+				}
+			}
 		}
 
 		return this.spineItems[index] || null;
@@ -162,9 +176,12 @@ class Spine {
 		// see pr for details: https://github.com/futurepress/epub.js/pull/358
 		this.spineByHref[decodeURI(section.href)] = index;
 		this.spineByHref[encodeURI(section.href)] = index;
+		this.spineByHref[section.href.substring(section.href.lastIndexOf('/')+1)] = index;
 		this.spineByHref[section.href] = index;
 
 		this.spineById[section.idref] = index;
+
+		this.spineByAbsoluteHref[section.url] = index;
 
 		return index;
 	}

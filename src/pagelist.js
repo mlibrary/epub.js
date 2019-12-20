@@ -12,7 +12,7 @@ import {
  * @param {document} [xml]
  */
 class PageList {
-	constructor(xml) {
+	constructor(xml, path, canonical) {
 		this.pages = [];
 		this.locations = [];
 		this.epubcfi = new EpubCFI();
@@ -21,8 +21,13 @@ class PageList {
 		this.lastPage = 0;
 		this.totalPages = 0;
 
+		this.pagesByAbsolutePath = {};
+
 		this.toc = undefined;
 		this.ncx = undefined;
+
+		this.path = path;
+		this.canonical = canonical;
 
 		if (xml) {
 			this.pageList = this.parse(xml);
@@ -67,7 +72,7 @@ class PageList {
 		if(!navItems || length === 0) return list;
 
 		for (i = 0; i < length; ++i) {
-			item = this.item(navItems[i]);
+			item = this.item(navItems[i], i);
 			list.push(item);
 		}
 
@@ -80,11 +85,12 @@ class PageList {
 	 * @param  {node} item
 	 * @return {object} pageListItem
 	 */
-	item(item){
+	item(item, i){
 		var content = qs(item, "a"),
 				href = content.getAttribute("href") || "",
 				text = content.textContent || "",
-				page = parseInt(text),
+				pageLabel = text,
+				page = i + 1, 
 				isCfi = href.indexOf("epubcfi"),
 				split,
 				packageUrl,
@@ -98,12 +104,14 @@ class PageList {
 				"cfi" : cfi,
 				"href" : href,
 				"packageUrl" : packageUrl,
-				"page" : page
+				"page" : page,
+				"pageLabel": pageLabel
 			};
 		} else {
 			return {
 				"href" : href,
-				"page" : page
+				"page" : page,
+				"pageLabel": pageLabel
 			};
 		}
 	}
@@ -118,6 +126,15 @@ class PageList {
 			this.pages.push(item.page);
 			if (item.cfi) {
 				this.locations.push(item.cfi);
+			}
+			if ( item.href ) {
+				var href = (item.href.split('#'))[0];
+				var path = this.path.resolve(href);
+				var absolute = this.canonical(path);
+				if ( this.pagesByAbsolutePath[absolute] == null ) {
+					this.pagesByAbsolutePath[absolute] = [];
+				}
+				this.pagesByAbsolutePath[absolute].push(item.page);
 			}
 		}, this);
 		this.firstPage = parseInt(this.pages[0]);
@@ -161,6 +178,14 @@ class PageList {
 
 		}
 		return pg;
+	}
+
+	pageLabel(page) {
+		var item = this.pageList[page];
+		if ( item ) {
+			return item.pageLabel || `#${page}`;
+		}
+		return -1;
 	}
 
 	/**

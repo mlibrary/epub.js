@@ -5,13 +5,17 @@ import {qs, qsa, querySelectorByType, filterChildren, getParentByTagName} from "
  * @param {document} xml navigation html / xhtml / ncx
  */
 class Navigation {
-	constructor(xml) {
+	constructor(xml, path, canonical) {
 		this.toc = [];
 		this.tocByHref = {};
 		this.tocById = {};
 
 		this.landmarks = [];
 		this.landmarksByType = {};
+
+		this.canonical = canonical;
+
+		this.path = path;
 
 		this.length = 0;
 		if (xml) {
@@ -191,9 +195,12 @@ class Navigation {
 			}
 		}
 
+		var path = this.path.resolve(src);
+
 		return {
 			"id": id,
 			"href": src,
+			"canonical": this.canonical(path),
 			"label": text,
 			"html": html,
 			"subitems" : subitems,

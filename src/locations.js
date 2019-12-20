@@ -31,6 +31,75 @@ class Locations {
 		this.processingTimeout = undefined;
 	}
 
+	generateFromPageListIncomplete(pageList) {
+
+		this.q.pause();
+
+		var i = 0;
+
+		pageList.pageList.forEach((page) => {
+      var parts = page.href.split('#');
+      var href = parts[0];
+      var target = parts[1];
+      if ( target ) {
+      	target = '#' + target;
+      } else {
+      	target = 'body';
+      }
+
+      var section = this.spine.get(href); // reliable?
+      this.q.enqueue(function(section) {
+      	section.load(this.request)
+      	  .then(function(contents) {
+      	    i += 1;
+      	    var node = contents.ownerDocument.querySelector(target);
+      	    // var cfiObject = self._book.spine.epubcfi.fromNode(node, section.cfiBase);
+      	    var cfi = section.cfiFromElement(node);
+      	    console.log("AHOY", node, cfi);
+      	    // self._book.pageList.locations[page.page] = self._book.spine.epubcfi.toString(cfi);
+      	    pageList.locations[page.page] = cfi;
+      	    this._locations[page.page - 0] = cfi;
+      	  }.bind(this))
+      }.bind(this), section)
+    })
+
+    return this.q.run().then(() => {
+    	this.total = this._locations.length - 1;
+    	if (this._currentCfi) {
+    		this.currentLocation = this._currentCfi;
+    	}
+
+    	return this._locations;
+    });
+	}
+
+	generateFromPageList(pageList) {
+
+		this.break = 1600;
+		this.q.pause();
+
+		var i = 0;
+
+		this._pageList = pageList;
+
+		this.spine.each(function(section) {
+			if (section.linear) {
+				this.q.enqueue(this.process.bind(this), section);
+			}
+		}.bind(this));
+
+		return this.q.run().then(function() {
+			this.total = this._locations.length - 1;
+
+			if (this._currentCfi) {
+				this.currentLocation = this._currentCfi;
+			}
+
+			return this._locations;
+			// console.log(this.percentage(this.book.rendition.location.start), this.percentage(this.book.rendition.location.end));
+		}.bind(this));
+	}
+
 	/**
 	 * Load all of sections in the book to generate locations
 	 * @param  {int} chars how many chars to split on
@@ -79,6 +148,39 @@ class Locations {
 				var completed = new defer();
 				var locations = this.parse(contents, section.cfiBase);
 				this._locations = this._locations.concat(locations);
+
+				if ( this._pageList ) {
+					// var page = this._pageList.pageList.find((page) => {
+					// 	var parts = page.href.split('#');
+					// 	var href = parts[0];
+					// 	console.log("AHOY ???", section.href, href);
+					// 	return section.href.indexOf(href) > -1;
+					// })
+
+					var pages = this._pageList.pagesByAbsolutePath[section.canonical] || []; // || 
+						// this._pageList.sectionByPage[section.href.substring(section.href.lastIndexOf('/')+1)] || [];
+
+					console.log("AHOY WUT", section.href, pages);
+					pages.forEach((page) => {
+						var item = this._pageList.pageList[page - 1];
+
+						var parts = item.href.split('#');
+						var target = parts[1] ? '#' + parts[1] : 'body';
+						var node = contents.ownerDocument.querySelector(target);
+						var cfi = section.cfiFromElement(node);
+						this._pageList.locations[page - 1] = cfi;
+						console.log("AHOY UPDATING PAGE LIST", page, this._pageList.locations[page - 1]);
+					})
+
+					// if ( page ) {
+					// 	var parts = page.href.split('#');
+					// 	var target = parts[1] ? '#' + parts[1] : 'body';
+					// 	var node = contents.ownerDocument.querySelector(target);
+					// 	var cfi = section.cfiFromElement(node);
+					// 	this._pageList.locations[page.page - 1] = cfi;
+					// 	console.log("AHOY UPDATING PAGE LIST", page.page, this._pageList.locations[page.page - 1]);
+					// }
+				}
 
 				section.unload();
 

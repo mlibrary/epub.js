@@ -510,10 +510,11 @@ class Book {
 			});
 		}
 
-		return this.load(navPath, "xml")
+		navPath = new Path(this.resolve(navPath));
+		return this.load(navPath.path, "xml")
 			.then((xml) => {
-				this.navigation = new Navigation(xml);
-				this.pageList = new PageList(xml);
+				this.navigation = new Navigation(xml, navPath, this.canonical.bind(this));
+				this.pageList = new PageList(xml, navPath, this.canonical.bind(this));
 				return this.navigation;
 			});
 	}
