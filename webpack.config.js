@@ -51,6 +51,7 @@ module.exports = {
 		host: hostname,
 		port: port,
 		inline: true,
+		disableHostCheck: true,
 		headers: {
 			"Access-Control-Allow-Origin": "*",
 			"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",

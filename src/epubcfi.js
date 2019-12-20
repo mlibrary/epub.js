@@ -305,23 +305,24 @@ class EpubCFI {
 	 * Convert CFI to a epubcfi(...) string
 	 * @returns {string} epubcfi
 	 */
-	toString() {
+	toString(cfi) {
+		if ( ! cfi ) { cfi = this; }
 		var cfiString = "epubcfi(";
 
-		cfiString += this.segmentString(this.base);
+		cfiString += this.segmentString(cfi.base);
 
 		cfiString += "!";
-		cfiString += this.segmentString(this.path);
+		cfiString += this.segmentString(cfi.path);
 
 		// Add Range, if present
-		if(this.range && this.start) {
+		if(cfi.range && cfi.start) {
 			cfiString += ",";
-			cfiString += this.segmentString(this.start);
+			cfiString += this.segmentString(cfi.start);
 		}
 
-		if(this.range && this.end) {
+		if(cfi.range && cfi.end) {
 			cfiString += ",";
-			cfiString += this.segmentString(this.end);
+			cfiString += this.segmentString(cfi.end);
 		}
 
 		cfiString += ")";
