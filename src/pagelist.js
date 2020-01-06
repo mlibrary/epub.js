@@ -180,6 +180,28 @@ class PageList {
 		return pg;
 	}
 
+	pagesFromLocation(location) {
+		var pgs = [];
+
+		// Check if the pageList has not been set yet
+		if(this.locations.length === 0) {
+			return [];
+		}
+
+		var pg = this.pageFromCfi(location.start.cfi);
+		if ( pg == -1 ) {
+			return [];
+		}
+
+		pgs.push(pg);
+		pg = this.pageFromCfi(location.end.cfi);
+		if ( pg != pgs[0] ) {
+			pgs.push(pg);
+		}
+
+		return pgs;
+	}
+
 	pageLabel(page) {
 		var item = this.pageList[page];
 		if ( item ) {
@@ -210,6 +232,14 @@ class PageList {
 		return cfi;
 	}
 
+	cfiFromPageLabel(pageLabel) {
+		var item = this.pageList.find(item => item.pageLabel == pageLabel);
+		if ( item ) {
+			return this.cfiFromPage(item.page);
+		}
+		return -1;
+	}
+
 	/**
 	 * Get a Page from Book percentage
 	 * @param  {number} percent
@@ -218,6 +248,16 @@ class PageList {
 	pageFromPercentage(percent){
 		var pg = Math.round(this.totalPages * percent);
 		return pg;
+	}
+
+	itemFromPercentage(percent) {
+		var pg = this.pageFromPercentage(percent);
+		return this.pageList[pg - 1];
+	}
+
+	itemFromCfi(cfi) {
+		var pg = this.pageFromCfi(cfi);
+		return this.pageList[pg - 1];
 	}
 
 	/**
