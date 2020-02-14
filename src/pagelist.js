@@ -189,7 +189,7 @@ class PageList {
 		}
 
 		var pg = this.pageFromCfi(location.start.cfi);
-		if ( pg == -1 ) {
+		if ( pg == -1 || pg >= this.locations.length ) {
 			return [];
 		}
 
