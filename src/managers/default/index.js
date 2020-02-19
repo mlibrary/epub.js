@@ -300,6 +300,7 @@ class DefaultViewManager {
 				if(target) {
 					let offset = view.locationOf(target);
 					this.moveTo(offset);
+					view.__target = { target: target, offset: offset };
 				}
 
 			}.bind(this), (err) => {
@@ -311,7 +312,6 @@ class DefaultViewManager {
 			.then(function(){
 
 				this.views.show();
-
 				displaying.resolve();
 
 			}.bind(this));
@@ -329,10 +329,17 @@ class DefaultViewManager {
 	}
 
 	afterResized(view){
+		if ( view.__target ) {
+			let offset = view.locationOf(view.__target.target);
+			if ( offset.left != view.__target.offset.left && offset.top != view.__target.offset.top ) {
+				this.moveTo(offset, false);
+			}
+			view.__target = undefined;
+		}
 		this.emit(EVENTS.MANAGERS.RESIZE, view.section);
 	}
 
-	moveTo(offset){
+	moveTo(offset, silent=true){
 		var distX = 0,
 				distY = 0;
 
@@ -345,7 +352,7 @@ class DefaultViewManager {
 				distX = this.container.scrollWidth - this.layout.delta;
 			}
 		}
-		this.scrollTo(distX, distY, true);
+		this.scrollTo(distX, distY, silent);
 	}
 
 	add(section, forceRight){
