@@ -377,6 +377,7 @@ class IframeView {
 			this.iframe.src = this.blobUrl;
 			this.element.appendChild(this.iframe);
 		} else if(this.settings.method === "srcdoc"){
+			contents = contents.replace('</body>', '<script>window.addEventListener("load", (e) => { });</script></body>');
 			this.iframe.srcdoc = contents;
 			this.element.appendChild(this.iframe);
 		} else {
