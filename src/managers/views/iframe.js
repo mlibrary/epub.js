@@ -378,6 +378,14 @@ class IframeView {
 			this.element.appendChild(this.iframe);
 		} else if(this.settings.method === "srcdoc"){
 			contents = contents.replace('</body>', '<script>window.addEventListener("load", (e) => { });</script></body>');
+			if ( this.settings.prehooks && this.settings.prehooks.head ) {
+				var buffer = [];
+				this.settings.prehooks.head.trigger(buffer);
+				buffer.forEach((b) => {
+					contents = contents.replace('</head>', b + '</head>');
+				})
+				// contents = contents.replace('</head>', this.settings.prehooks.head(this.settings.layout) + '</head>');
+			}
 			this.iframe.srcdoc = contents;
 			this.element.appendChild(this.iframe);
 		} else {

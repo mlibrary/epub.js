@@ -30,6 +30,7 @@ class DefaultViewManager {
 		extend(this.settings, options.settings || {});
 
 		this.viewSettings = {
+			prehooks: this.settings.prehooks,
 			ignoreClass: this.settings.ignoreClass,
 			axis: this.settings.axis,
 			flow: this.settings.flow,
