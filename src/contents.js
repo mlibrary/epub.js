@@ -754,10 +754,10 @@ class Contents {
 		if (!styleEl) {
 			styleEl = this.document.createElement("style");
 			styleEl.id = key;
+			// Append style element to head
+			this.document.head.appendChild(styleEl);
 		}
 
-		// Append style element to head
-		this.document.head.appendChild(styleEl);
 
 		// Grab style sheet
 		styleSheet = styleEl.sheet;
