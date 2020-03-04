@@ -140,6 +140,8 @@ class PageList {
 		this.firstPage = parseInt(this.pages[0]);
 		this.lastPage = parseInt(this.pages[this.pages.length-1]);
 		this.totalPages = this.lastPage - this.firstPage;
+		this.firstPageLabel = this.pageList[0].pageLabel;
+		this.lastPageLabel = this.pageList[this.pageList.length - 1].pageLabel;
 	}
 
 	/**
