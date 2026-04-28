@@ -50,8 +50,7 @@ module.exports = {
 	devServer: {
 		host: hostname,
 		port: port,
-		inline: true,
-		disableHostCheck: true,
+		allowedHosts: "all",
 		headers: {
 			"Access-Control-Allow-Origin": "*",
 			"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
