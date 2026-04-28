@@ -29,9 +29,11 @@ module.exports = {
 		path: path.resolve("./dist"),
 		filename: filename,
 		sourceMapFilename: sourceMapFilename,
-		library: "ePub",
-		libraryTarget: "umd",
-		libraryExport: "default",
+		library: {
+			name: "ePub",
+			type: "umd",
+			export: "default"
+		},
 		publicPath: "/dist/"
 	},
 	optimization: {
@@ -44,7 +46,10 @@ module.exports = {
 	plugins: [],
 	resolve: {
 		alias: {
-			path: "path-webpack"
+			"marks-pane": require.resolve("marks-pane/src/marks.js")
+		},
+		fallback: {
+			path: require.resolve("path-webpack")
 		}
 	},
 	devServer: {
