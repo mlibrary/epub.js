@@ -29,11 +29,10 @@
     "event-emitter": "^0.3.5",
     "jszip": "^3.4.0",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.18.1",
     "marks-pane": "^1.0.9",
     "path-webpack": "0.0.3",
     "stream-browserify": "^3.0.0",
-    "url-polyfill": "^1.1.9",
-    "xmldom": "^0.3.0"
+    "url-polyfill": "^1.1.9"
   }
 }
